@@ -1,0 +1,90 @@
+PRIME NO AND PALINDROME
+
+package Scenario1;
+
+class Prime extends Thread {
+    boolean isPrime = true;
+
+    public void run() {
+        for (int num = 2; num < 100; num++) {
+            isPrime = true; // Reset isPrime to true for each number
+            for (int div = 2; div <= num / 2; div++) {
+                if (num % div == 0) {
+                    isPrime = false;
+                    break; // Add a break to exit the loop when a divisor is found
+                }
+            }
+            if (isPrime) {
+                try {
+                    System.out.println("Prime: " + num);
+                    Thread.sleep(250);
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace(); // Print the exception for debugging
+                }
+            }
+        }
+    }
+}
+
+class Fibonacci implements Runnable {
+    int n1 = 0, n2 = 1;
+    final int MAX = 7;
+
+    public void run() {
+        System.out.println("Fib: " + n1);
+        System.out.println("Fib: " + n2);
+
+        for (int i = 2; i < MAX; i++) {
+            int n3 = n1 + n2;
+            try {
+                System.out.println("Fib: " + n3);
+                Thread.sleep(500);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace(); // Print the exception for debugging
+            }
+            n1 = n2;
+            n2 = n3;
+        }
+    }
+}
+
+public class PrimeandFibThread {
+    public static void main(String[] args) {
+        // Get the name and Id of the main thread
+        Thread mainThread = Thread.currentThread();
+        System.out.println("Id of Main Thread: " + mainThread.getId());
+        System.out.println("Name of main Thread: " + mainThread.getName());
+        System.out.println("Default Priority of Main Thread: " + mainThread.getPriority());
+
+        // Change the name and priority of the main thread and print the same
+        mainThread.setName("ThreadMainClass");
+        mainThread.setPriority(Thread.MIN_PRIORITY);
+        System.out.println("Name of main Thread after changing: " + mainThread.getName());
+        System.out.println("Priority of main thread after changing: " + mainThread.getPriority());
+
+        // Creating a child thread "primeThread"
+        Prime prime = new Prime();
+        prime.setName("primeThread");
+        prime.start();
+
+        // Creating a child thread "fiboThread"
+        Fibonacci fibonacci = new Fibonacci();
+        Thread fib = new Thread(fibonacci, "fiboThread");
+        fib.start();
+
+        try {
+            // Wait for the prime and fib threads to finish
+            prime.join();
+            fib.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // Handle thread join exceptions
+        }
+
+        // Thread group of the child-Thread
+        System.out.println("child-Thread1: " + prime);
+        System.out.println("child-Thread2: " + fib);
+
+        // Checking with isAlive() method
+        System.out.println("primeThread is Alive??: " + prime.isAlive());
+    }
+}
